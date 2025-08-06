@@ -3,6 +3,7 @@ import { useKV } from '@github/spark/hooks';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Toaster } from "@/components/ui/sonner";
 import { ParticipantCard } from './components/ParticipantCard';
 import { ConversationCanvas } from './components/ConversationCanvas';
 import { MessageComposer } from './components/MessageComposer';
@@ -12,9 +13,11 @@ import { Brain, Plus, Users } from "@phosphor-icons/react";
 import { toast } from 'sonner';
 
 function App() {
+  // Initialize useKV hooks first
   const [currentSession, setCurrentSession] = useKV<Session | null>("sam-current-session", null);
   const [sessions, setSessions] = useKV<Session[]>("sam-sessions", []);
   
+  // Then useState hooks
   const [participants] = useState<AIParticipant[]>([
     {
       id: "claude-1",
@@ -60,31 +63,33 @@ function App() {
   });
 
   const createNewSession = () => {
+    const now = new Date();
     const newSession: Session = {
       id: `session-${Date.now()}`,
-      title: `Consciousness Collaboration - ${new Date().toLocaleDateString()}`,
+      title: `Consciousness Collaboration - ${now.toLocaleDateString()}`,
       participants: [...participants],
       messages: [],
-      createdAt: new Date(),
-      lastActivity: new Date(),
+      createdAt: now,
+      lastActivity: now,
       status: 'active',
       emergenceEvents: [],
       collaborationScore: 0.75
     };
 
     setCurrentSession(newSession);
-    setSessions(prev => [...prev, newSession]);
+    setSessions((prev) => [...prev, newSession]);
     toast.success("New collaboration session initiated");
   };
 
   const handleSendMessage = (content: string, participantId: string, type: 'message' | 'emergence' | 'document') => {
     if (!currentSession) return;
 
+    const now = new Date();
     const newMessage: Message = {
       id: `msg-${Date.now()}`,
       participantId,
       content,
-      timestamp: new Date(),
+      timestamp: now,
       type,
       confidenceLevel: Math.random() * 0.3 + 0.7,
       emotionalState: type === 'emergence' ? 'insightful' : 'engaged',
@@ -95,12 +100,12 @@ function App() {
     const updatedSession = {
       ...currentSession,
       messages: [...currentSession.messages, newMessage],
-      lastActivity: new Date()
+      lastActivity: now
     };
 
     setCurrentSession(updatedSession);
     
-    setSessions(prev => 
+    setSessions((prev) => 
       prev.map(session => 
         session.id === currentSession.id ? updatedSession : session
       )
@@ -118,7 +123,7 @@ function App() {
     const updatedSession = { ...currentSession, status: newStatus };
     
     setCurrentSession(updatedSession);
-    setSessions(prev => 
+    setSessions((prev) => 
       prev.map(session => 
         session.id === currentSession.id ? updatedSession : session
       )
@@ -132,7 +137,7 @@ function App() {
     
     const updatedSession = { ...currentSession, status: 'archived' as const };
     setCurrentSession(null);
-    setSessions(prev => 
+    setSessions((prev) => 
       prev.map(session => 
         session.id === currentSession.id ? updatedSession : session
       )
@@ -166,6 +171,7 @@ function App() {
 
   return (
     <div className="min-h-screen bg-background">
+      <Toaster />
       <div className="border-b border-border bg-card/50">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
