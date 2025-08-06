@@ -47,7 +47,6 @@ function App() {
   const setSessions = (updater: (prev: Session[]) => Session[]) => {
     setSessionsRaw((prev) => updater(prev.map(s => deserializeSession(s))));
   };
-  const [documents] = useKV<any[]>("sam-documents-demo", []); // For checking if docs exist
   
   // Then useState hooks
   const [participants] = useState<AIParticipant[]>([
