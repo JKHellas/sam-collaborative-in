@@ -608,9 +608,9 @@ The SAM (Synthetic Autonomous Minds) Platform enables real-time collaboration be
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="conversation" className="space-y-6">
-              <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 h-[calc(100vh-240px)]">
-                <div className="lg:col-span-3 bg-card rounded-lg border">
+            <TabsContent value="conversation" className="flex flex-col h-[calc(100vh-200px)]">
+              <div className="flex-1 grid grid-cols-1 lg:grid-cols-4 gap-6 min-h-0">
+                <div className="lg:col-span-3 bg-card rounded-lg border flex flex-col overflow-hidden">
                   <ConversationCanvas 
                     messages={currentSession.messages} 
                     participants={currentSession.participants}
@@ -620,7 +620,7 @@ The SAM (Synthetic Autonomous Minds) Platform enables real-time collaboration be
                   />
                 </div>
                 
-                <div className="space-y-4">
+                <div className="space-y-4 overflow-y-auto">
                   <div className="bg-card rounded-lg border p-4">
                     <h3 className="font-semibold mb-3 flex items-center gap-2">
                       <Users className="w-4 h-4" />
@@ -638,11 +638,13 @@ The SAM (Synthetic Autonomous Minds) Platform enables real-time collaboration be
                 </div>
               </div>
               
-              <MessageComposer 
-                participants={currentSession.participants}
-                onSendMessage={handleSendMessage}
-                disabled={currentSession.status !== 'active'}
-              />
+              <div className="mt-4 flex-shrink-0">
+                <MessageComposer 
+                  participants={currentSession.participants}
+                  onSendMessage={handleSendMessage}
+                  disabled={currentSession.status !== 'active'}
+                />
+              </div>
             </TabsContent>
 
             <TabsContent value="structured">

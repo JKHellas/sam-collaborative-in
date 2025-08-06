@@ -81,17 +81,17 @@ export function MessageBubble({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className="flex gap-3 group"
+      className="flex gap-3 group relative"
     >
-      <Avatar className="w-8 h-8 mt-1">
+      <Avatar className="w-8 h-8 mt-1 flex-shrink-0">
         <AvatarImage src={participant.avatar} />
         <AvatarFallback className="bg-primary text-primary-foreground text-sm">
           {participant.name.split(' ').map(n => n[0]).join('')}
         </AvatarFallback>
       </Avatar>
 
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2 mb-1">
+      <div className="flex-1 min-w-0 space-y-1">
+        <div className="flex items-center gap-2 flex-wrap">
           <span className="font-medium text-sm">{participant.name}</span>
           <Badge variant="outline" className="text-xs">
             {participant.role}
@@ -110,12 +110,12 @@ export function MessageBubble({
           {getStatusIcon()}
         </div>
 
-        <Card className={`relative p-4 ${getMessageTypeStyle()}`}>
+        <Card className={`relative p-4 ${getMessageTypeStyle()} w-full`}>
           {getEmergenceIndicator()}
           
           <div className="prose prose-sm max-w-none text-card-foreground">
             {message.content.split('\n').map((line, index) => (
-              <p key={index} className="mb-2 last:mb-0">
+              <p key={index} className="mb-2 last:mb-0 break-words">
                 {line}
               </p>
             ))}
@@ -129,9 +129,9 @@ export function MessageBubble({
             </div>
           )}
 
-          <div className="flex items-center justify-between mt-3 pt-2 border-t border-border/50">
-            <div className="flex items-center gap-2">
-              <span className="text-xs text-muted-foreground">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mt-3 pt-2 border-t border-border/50">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-xs text-muted-foreground whitespace-nowrap">
                 Confidence: {Math.round(message.confidenceLevel * 100)}%
               </span>
               {message.emotionalState && (
@@ -143,7 +143,7 @@ export function MessageBubble({
             
             <div className="flex items-center gap-2">
               {message.emergenceScore && message.emergenceScore > 0.5 && (
-                <Badge variant="secondary" className="text-xs bg-emergence/20 text-emergence">
+                <Badge variant="secondary" className="text-xs bg-emergence/20 text-emergence whitespace-nowrap">
                   Emergence: {Math.round(message.emergenceScore * 100)}%
                 </Badge>
               )}
