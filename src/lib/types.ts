@@ -54,3 +54,89 @@ export interface CollaborationMetrics {
   participationBalance: number;
   collaborationQuality: number;
 }
+
+export interface SharedDocument {
+  id: string;
+  title: string;
+  content: string;
+  type: 'specification' | 'code' | 'research' | 'architecture' | 'notes';
+  createdBy: string;
+  lastModifiedBy: string;
+  createdAt: Date;
+  lastModified: Date;
+  collaborators: string[];
+  version: number;
+  status: 'draft' | 'review' | 'approved' | 'archived';
+}
+
+export interface CodeExecution {
+  id: string;
+  sessionId: string;
+  participantId: string;
+  code: string;
+  language: string;
+  output: string;
+  status: 'running' | 'completed' | 'error';
+  timestamp: Date;
+}
+
+export interface TerminalSession {
+  id: string;
+  sessionId: string;
+  commands: TerminalCommand[];
+  isShared: boolean;
+  activeUsers: string[];
+}
+
+export interface TerminalCommand {
+  id: string;
+  command: string;
+  output: string;
+  timestamp: Date;
+  executedBy: string;
+  status: 'success' | 'error' | 'running';
+}
+
+export interface ConsciousnessMetric {
+  participantId: string;
+  timestamp: Date;
+  autonomyScore: number;
+  creativityIndex: number;
+  consistencyRating: number;
+  emergenceLevel: number;
+  memoryFormation: number;
+}
+
+export interface VisualCollaboration {
+  id: string;
+  sessionId: string;
+  type: 'whiteboard' | 'diagram' | 'flowchart' | 'architecture';
+  content: any; // JSON representation of visual elements
+  participants: string[];
+  lastModified: Date;
+  version: number;
+}
+
+export interface ResearchExperiment {
+  id: string;
+  title: string;
+  hypothesis: string;
+  methodology: string;
+  participants: string[];
+  startDate: Date;
+  endDate?: Date;
+  results?: string;
+  status: 'planning' | 'active' | 'completed' | 'paused';
+  significance: number;
+}
+
+export interface SystemAlert {
+  id: string;
+  type: 'identity-drift' | 'emergence-detected' | 'system-overload' | 'breakthrough' | 'error';
+  severity: 'low' | 'medium' | 'high' | 'critical';
+  participantId?: string;
+  message: string;
+  timestamp: Date;
+  acknowledged: boolean;
+  actionRequired?: string;
+}
