@@ -15,6 +15,7 @@ import { VisualCollaboration } from './components/VisualCollaboration';
 import { ResearchLab } from './components/ResearchLab';
 import { SystemStatus } from './components/SystemStatus';
 import { AIParticipant, Message, Session, CollaborationMetrics } from './lib/types';
+import { deserializeSession } from './lib/utils';
 import { 
   Brain, 
   Plus, 
@@ -30,9 +31,22 @@ import {
 import { toast } from 'sonner';
 
 function App() {
-  // Initialize useKV hooks first
-  const [currentSession, setCurrentSession] = useKV<Session | null>("sam-current-session", null);
-  const [sessions, setSessions] = useKV<Session[]>("sam-sessions", []);
+  // Initialize useKV hooks first with deserialization
+  const [currentSessionRaw, setCurrentSessionRaw] = useKV<Session | null>("sam-current-session", null);
+  const [sessionsRaw, setSessionsRaw] = useKV<Session[]>("sam-sessions", []);
+  const [documents] = useKV<any[]>("sam-documents-demo", []); // For checking if docs exist
+  
+  // Deserialize dates from storage
+  const currentSession = currentSessionRaw ? deserializeSession(currentSessionRaw) : null;
+  const sessions = sessionsRaw.map(s => deserializeSession(s));
+  
+  const setCurrentSession = (session: Session | null) => {
+    setCurrentSessionRaw(session);
+  };
+  
+  const setSessions = (updater: (prev: Session[]) => Session[]) => {
+    setSessionsRaw((prev) => updater(prev.map(s => deserializeSession(s))));
+  };
   const [documents] = useKV<any[]>("sam-documents-demo", []); // For checking if docs exist
   
   // Then useState hooks

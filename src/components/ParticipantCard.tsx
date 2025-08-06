@@ -80,7 +80,7 @@ export function ParticipantCard({ participant, showDetails = false }: Participan
             ))}
           </div>
           <p className="text-xs text-muted-foreground mt-2">
-            Last active: {participant.lastActivity.toLocaleTimeString()}
+            Last active: {new Date(participant.lastActivity).toLocaleTimeString()}
           </p>
         </div>
       )}

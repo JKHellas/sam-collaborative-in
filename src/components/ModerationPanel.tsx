@@ -174,7 +174,7 @@ export function ModerationPanel({
       <div className="pt-4 border-t border-border">
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <Activity className="w-4 h-4" />
-          Last activity: {session.lastActivity.toLocaleTimeString()}
+          Last activity: {new Date(session.lastActivity).toLocaleTimeString()}
         </div>
       </div>
     </Card>

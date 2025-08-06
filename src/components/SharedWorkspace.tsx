@@ -272,7 +272,7 @@ Based on your personality markers (${ai.personalityMarkers.join(', ')}) and role
     setActiveEditors((prev) => {
       const filtered = prev.filter(editor => 
         editor.participantId !== currentUserId && 
-        new Date().getTime() - editor.lastActivity.getTime() < 30000 // 30 seconds
+        new Date().getTime() - new Date(editor.lastActivity).getTime() < 30000 // 30 seconds
       );
       return [...filtered, {
         participantId: currentUserId,
@@ -703,7 +703,7 @@ Based on your personality markers (${ai.personalityMarkers.join(', ')}) and role
                           
                           <div className="flex items-center justify-between">
                             <span className="text-xs text-muted-foreground">
-                              {contribution.timestamp.toLocaleTimeString()}
+                              {new Date(contribution.timestamp).toLocaleTimeString()}
                             </span>
                             {!contribution.applied && (
                               <Button 

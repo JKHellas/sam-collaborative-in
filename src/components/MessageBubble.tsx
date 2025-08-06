@@ -76,7 +76,7 @@ export function MessageBubble({ message, participant, showTimestamp = true }: Me
           </Badge>
           {showTimestamp && (
             <span className="text-xs text-muted-foreground">
-              {message.timestamp.toLocaleTimeString()}
+              {new Date(message.timestamp).toLocaleTimeString()}
             </span>
           )}
           {getStatusIcon()}
