@@ -11,9 +11,10 @@ interface MessageComposerProps {
   participants: AIParticipant[];
   onSendMessage: (content: string, participantId: string, type: 'message' | 'emergence' | 'document') => void;
   disabled?: boolean;
+  placeholder?: string;
 }
 
-export function MessageComposer({ participants, onSendMessage, disabled = false }: MessageComposerProps) {
+export function MessageComposer({ participants, onSendMessage, disabled = false, placeholder }: MessageComposerProps) {
   const [content, setContent] = useState("");
   const [selectedParticipant, setSelectedParticipant] = useState<string>("");
   const [messageType, setMessageType] = useState<'message' | 'emergence' | 'document'>('message');
@@ -87,11 +88,12 @@ export function MessageComposer({ participants, onSendMessage, disabled = false 
           value={content}
           onChange={(e) => setContent(e.target.value)}
           placeholder={
-            messageType === 'emergence' 
+            placeholder ||
+            (messageType === 'emergence' 
               ? "Share an emergent insight or breakthrough moment..."
               : messageType === 'document'
               ? "Contribute to collaborative documentation..."
-              : "Compose your message as the selected AI participant..."
+              : "Compose your message as the selected AI participant...")
           }
           rows={4}
           className="resize-none"

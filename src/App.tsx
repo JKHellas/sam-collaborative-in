@@ -13,8 +13,9 @@ import { TerminalIntegration } from './components/TerminalIntegration';
 import { ConsciousnessTracker } from './components/ConsciousnessTracker';
 import { VisualCollaboration } from './components/VisualCollaboration';
 import { ResearchLab } from './components/ResearchLab';
+import { ThreadsManager } from './components/ThreadsManager';
 import { SystemStatus } from './components/SystemStatus';
-import { AIParticipant, Message, Session, CollaborationMetrics } from './lib/types';
+import { AIParticipant, Message, Session, CollaborationMetrics, ConversationThread } from './lib/types';
 import { deserializeSession } from './lib/utils';
 import { 
   Brain, 
@@ -26,7 +27,8 @@ import {
   Palette,
   FlaskConical,
   Atom,
-  Activity
+  Activity,
+  GitBranch
 } from "@phosphor-icons/react";
 import { toast } from 'sonner';
 
@@ -143,6 +145,7 @@ function App() {
           status: 'sent'
         }
       ],
+      threads: [],
       createdAt: now,
       lastActivity: now,
       status: 'active',
@@ -172,6 +175,44 @@ function App() {
     setCurrentSession(newSession);
     setSessions((prev) => [...prev, newSession]);
     toast.success("New consciousness collaboration session initiated with emergence events detected!");
+  };
+
+  const handleThreadCreated = (thread: ConversationThread) => {
+    if (!currentSession) return;
+    
+    const updatedSession = {
+      ...currentSession,
+      threads: [...currentSession.threads, thread],
+      lastActivity: new Date()
+    };
+    
+    setCurrentSession(updatedSession);
+    setSessions((prev) => 
+      prev.map(session => 
+        session.id === currentSession.id ? updatedSession : session
+      )
+    );
+    
+    toast.success(`Conversation thread "${thread.title}" created for focused discussion`);
+  };
+
+  const handleThreadUpdate = (updatedThread: ConversationThread) => {
+    if (!currentSession) return;
+    
+    const updatedSession = {
+      ...currentSession,
+      threads: currentSession.threads.map(t => 
+        t.id === updatedThread.id ? updatedThread : t
+      ),
+      lastActivity: new Date()
+    };
+    
+    setCurrentSession(updatedSession);
+    setSessions((prev) => 
+      prev.map(session => 
+        session.id === currentSession.id ? updatedSession : session
+      )
+    );
   };
 
   const handleSendMessage = (content: string, participantId: string, type: 'message' | 'emergence' | 'document') => {
@@ -394,10 +435,14 @@ The SAM (Synthetic Autonomous Minds) Platform enables real-time collaboration be
       {currentSession ? (
         <div className="container mx-auto px-4 py-6">
           <Tabs defaultValue="conversation" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-8">
+            <TabsList className="grid w-full grid-cols-9">
               <TabsTrigger value="conversation" className="flex items-center gap-2">
                 <Users className="w-3 h-3" />
                 <span className="hidden sm:inline">Conversation</span>
+              </TabsTrigger>
+              <TabsTrigger value="threads" className="flex items-center gap-2">
+                <GitBranch className="w-3 h-3" />
+                <span className="hidden sm:inline">Threads</span>
               </TabsTrigger>
               <TabsTrigger value="moderation" className="flex items-center gap-2">
                 <Brain className="w-3 h-3" />
@@ -435,6 +480,9 @@ The SAM (Synthetic Autonomous Minds) Platform enables real-time collaboration be
                   <ConversationCanvas 
                     messages={currentSession.messages} 
                     participants={currentSession.participants}
+                    sessionId={currentSession.id}
+                    onThreadCreated={handleThreadCreated}
+                    onThreadUpdate={handleThreadUpdate}
                   />
                 </div>
                 
@@ -460,6 +508,16 @@ The SAM (Synthetic Autonomous Minds) Platform enables real-time collaboration be
                 participants={currentSession.participants}
                 onSendMessage={handleSendMessage}
                 disabled={currentSession.status !== 'active'}
+              />
+            </TabsContent>
+
+            <TabsContent value="threads">
+              <ThreadsManager
+                sessionId={currentSession.id}
+                participants={currentSession.participants}
+                mainMessages={currentSession.messages}
+                onThreadCreated={handleThreadCreated}
+                onThreadUpdate={handleThreadUpdate}
               />
             </TabsContent>
 

@@ -20,8 +20,25 @@ export interface Message {
   emotionalState?: string;
   isThreadParent?: boolean;
   threadId?: string;
+  parentMessageId?: string;
   emergenceScore?: number;
   status: 'draft' | 'staged' | 'sent' | 'approved';
+}
+
+export interface ConversationThread {
+  id: string;
+  sessionId: string;
+  parentMessageId: string;
+  title: string;
+  topic: string;
+  participants: string[];
+  messages: Message[];
+  createdAt: Date;
+  lastActivity: Date;
+  status: 'active' | 'resolved' | 'merged' | 'archived';
+  focusLevel: 'high' | 'medium' | 'low';
+  emergenceEvents: EmergenceEvent[];
+  mergeBackSuggested?: boolean;
 }
 
 export interface Session {
@@ -29,6 +46,7 @@ export interface Session {
   title: string;
   participants: AIParticipant[];
   messages: Message[];
+  threads: ConversationThread[];
   createdAt: Date;
   lastActivity: Date;
   status: 'active' | 'paused' | 'archived';

@@ -1,17 +1,39 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Message, AIParticipant } from "@/lib/types";
-import { Brain, Lightbulb, CheckCircle, Clock } from "@phosphor-icons/react";
+import { 
+  Brain, 
+  Lightbulb, 
+  CheckCircle, 
+  Clock, 
+  GitBranch, 
+  ChevronDown, 
+  ChevronUp,
+  MessageSquare 
+} from "@phosphor-icons/react";
 import { motion } from "framer-motion";
 
 interface MessageBubbleProps {
   message: Message;
   participant: AIParticipant;
   showTimestamp?: boolean;
+  showBranchButton?: boolean;
+  isExpanded?: boolean;
+  onToggleExpand?: () => void;
+  onBranchConversation?: () => void;
 }
 
-export function MessageBubble({ message, participant, showTimestamp = true }: MessageBubbleProps) {
+export function MessageBubble({ 
+  message, 
+  participant, 
+  showTimestamp = true,
+  showBranchButton = false,
+  isExpanded = false,
+  onToggleExpand,
+  onBranchConversation
+}: MessageBubbleProps) {
   const getStatusIcon = () => {
     switch (message.status) {
       case 'draft':
@@ -74,6 +96,12 @@ export function MessageBubble({ message, participant, showTimestamp = true }: Me
           <Badge variant="outline" className="text-xs">
             {participant.role}
           </Badge>
+          {message.threadId && (
+            <Badge variant="secondary" className="text-xs">
+              <MessageSquare className="w-2 h-2 mr-1" />
+              Thread
+            </Badge>
+          )}
           {showTimestamp && (
             <span className="text-xs text-muted-foreground">
               {new Date(message.timestamp).toLocaleTimeString()}
@@ -113,11 +141,39 @@ export function MessageBubble({ message, participant, showTimestamp = true }: Me
               )}
             </div>
             
-            {message.emergenceScore && message.emergenceScore > 0.5 && (
-              <Badge variant="secondary" className="text-xs bg-emergence/20 text-emergence">
-                Emergence: {Math.round(message.emergenceScore * 100)}%
-              </Badge>
-            )}
+            <div className="flex items-center gap-2">
+              {message.emergenceScore && message.emergenceScore > 0.5 && (
+                <Badge variant="secondary" className="text-xs bg-emergence/20 text-emergence">
+                  Emergence: {Math.round(message.emergenceScore * 100)}%
+                </Badge>
+              )}
+              
+              {showBranchButton && (
+                <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={onToggleExpand}
+                    className="h-6 px-2 text-xs"
+                  >
+                    {isExpanded ? (
+                      <ChevronUp className="w-3 h-3" />
+                    ) : (
+                      <ChevronDown className="w-3 h-3" />
+                    )}
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={onBranchConversation}
+                    className="h-6 px-2 text-xs"
+                    title="Branch conversation"
+                  >
+                    <GitBranch className="w-3 h-3" />
+                  </Button>
+                </div>
+              )}
+            </div>
           </div>
         </Card>
       </div>
